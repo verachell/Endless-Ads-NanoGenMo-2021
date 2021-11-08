@@ -1,0 +1,108 @@
+ASSIGNLIST allnouns = portablenouns + largenouns + noun
+ASSIGNLIST specnoun = allnouns 1
+ASSIGNLIST specadj = adj 1
+ASSIGNLIST safety = "safety" + "security" + "wellbeing" + "peace of mind" + "preservation"
+ASSIGNLIST problem = "problem" + "complication" + "predicament" + "hazard" + "difficulty" + "pitfall" + "issue"
+ASSIGNLIST cause = "cause" + "result in" + "engender" + "give rise to"
+ASSIGNLIST experiencing = "experiencing" + "having" + "encountering" + "going through" + "undergoing" + "running into" + "enduring"
+ASSIGNLIST probably = "probably" + "likely" + "doubtlessly" + "presumably" + "in al likelihood" + "most likely"
+ASSIGNLIST tomorrow = "tomorrow" + "the future" + "times to come" + "what lies ahead"
+ASSIGNLIST modernizing = "modernizing" + "renovating" + "remaking" + "renewing"
+ASSIGNLIST need = "need" + "must" + "have" + "want"
+ASSIGNLIST necessary = "necessary" + "important" + "of the essence" + "needful" + "imperative" + "obligatory" + "critical" + "paramount"
+ASSIGNLIST ridicule = "ridicule" + "laugh at" + "look down on" + "poke fun at" + "mock"
+ASSIGNLIST arrived = "arrived" + "showed up" + "came on the scene" + "appeared"
+ASSIGNLIST region = "region" + "street" + "neighborhood" + "area" + "city"
+ASSIGNLIST choice = "choice" + "option" + "alternative" + "invention"
+ASSIGNLIST product = "product" + "gadget" + "item"
+ASSIGNLIST names = malenames + femalenames
+
+DESC compoundline
+ASSIGNLIST startline = middleline1 1
+ASSIGNLIST join = conj 1
+ASSIGNLIST endline = middleline2 1
+WORDJOIN full = startline + " " + join + " " + endline
+WRITE full mywords 1
+DESCEND
+
+DESC companyname
+ASSIGNLIST l1 = consonant 1
+UPCASE l1up = l1
+ASSIGNLIST l2 = vowel 1
+ASSIGNLIST l3 = consonant 1
+ASSIGNLIST llast = lsuffix 1
+WORDJOIN companyname = l1up + l2 + l3 + llast
+DESCEND
+
+DESC testimonial
+FORMAT X
+ASSIGNLIST name = names 1
+ASSIGNLIST says = "says" + "said" + "declares" + "attests" + "certifies" + "avows" + "affirms" + "announces"
+ASSIGNLIST preamble = "But don't take our word for it:" + "Let's hear from one of our customers:" + "Hear what a customer has to say:" + "Join satisfied customers like this one:"
+ASSIGNCATALOG localwords = name + says + preamble
+WRITE preamble localwords
+ASSIGNLIST thename = "_NAME_ _SAYS_, "
+NEWPARA
+WRITE thename localwords
+FORMAT PQS
+WRITE testimonial mywords
+NEWPARA
+FORMAT ACPS
+DESCEND
+
+# initialize word catalog
+CALL companyname
+ASSIGNCATALOG mywords = wfolder - companyname
+ASSIGNCATALOG mywords = mywords + specnoun + specadj + companyname + safety + problem + cause + experiencing + probably + tomorrow + modernizing + need + necessary + ridicule + arrived + region + choice + product
+
+DESC ad
+FORMAT ACS
+WRITE introline mywords
+FORMAT ACPS
+LOOP 0--1
+CALL compoundline
+LOOPEND
+
+# generate new company name and write about company
+ASSIGNCATALOG mywords = mywords - companyname
+CALL companyname
+ASSIGNCATALOG mywords = mywords + companyname
+WRITE company mywords
+
+# generate exclamation
+FORMAT ACES
+WRITE exclamation mywords 0--1
+FORMAT ACPS
+
+# testimonial
+LOOP 0--1
+CALL testimonial
+LOOPEND
+
+LOOP 0--1
+CALL compoundline
+LOOPEND
+
+# generate new item for the solution in this ad
+ASSIGNCATALOG mywords = mywords - specnoun - specadj
+ASSIGNLIST specnoun = allnouns 1
+ASSIGNLIST specadj = adj 1
+ASSIGNCATALOG mywords = mywords + specnoun + specadj
+FORMAT ACPSH
+WRITE lastline mywords
+FORMAT ACPS
+
+NEWPARA
+DESCEND
+# end of ad desc
+
+# write title and subheading
+ASSIGNLIST title = "We can _CHANGE_ your _SPECADJ_ _SPECNOUN_"
+FORMAT D
+WRITE title mywords
+FORMAT F
+WRITE exclamation mywords
+FORMAT ACPS
+LOOP 50000W
+CALL ad
+LOOPEND
