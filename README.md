@@ -1,5 +1,5 @@
 # Endless-Ads-NanoGenMo-2021
-Generates a series of fictional advertisements of > 50,000 words where the solution for the first ad becomes the problem in the second ad, and so on.
+Generates a series of fictional advertisements of > 50,000 words. The solution in the first ad becomes the problem in the second ad, and so on.
 
 ## Endless Ads - a solution for every problem, and a problem for every solution
 ### Usage - how to run this program
